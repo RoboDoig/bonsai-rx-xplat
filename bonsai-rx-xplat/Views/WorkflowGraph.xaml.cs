@@ -8,9 +8,4 @@ public partial class WorkflowGraph : ContentView
 	{
 		InitializeComponent();
 	}
-
-	private void WorkflowView_StartInteraction(object sender, TouchEventArgs e)
-	{
-
-	}
 }

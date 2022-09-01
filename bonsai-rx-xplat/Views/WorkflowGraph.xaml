@@ -25,11 +25,12 @@
                 Command="{Binding TouchCommand}"
                 EventArgsConverter="{StaticResource TouchEventArgsConverter}">
             </toolkit:EventToCommandBehavior>
-        </GraphicsView.Behaviors>
-        <!--<GraphicsView.GestureRecognizers>
-            <TapGestureRecognizer x:Name="TapGesture" Command="{Binding OnStartInteraction}" CommandParameter="{x:Reference TapGesture}">
 
-            </TapGestureRecognizer>
-        </GraphicsView.GestureRecognizers>-->
+            <toolkit:EventToCommandBehavior
+                EventName="DragInteraction"
+                Command="{Binding DragCommand}"
+                EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+            </toolkit:EventToCommandBehavior>
+        </GraphicsView.Behaviors>
     </GraphicsView>
 </ContentView>
