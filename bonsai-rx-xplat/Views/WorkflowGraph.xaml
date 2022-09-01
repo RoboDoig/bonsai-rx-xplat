@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:bonsai_rx_xplat.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:local="clr-namespace:bonsai_rx_xplat"
+             x:DataType="viewmodel:WorkflowGraphViewModel"
+             x:Class="bonsai_rx_xplat.Views.WorkflowGraph">
+
+    <ContentView.Resources>
+        <viewmodel:WorkflowGraphViewModel x:Key="GraphDrawing"></viewmodel:WorkflowGraphViewModel>
+        <ResourceDictionary>
+            <local:TouchEventArgsConverter x:Key="TouchEventArgsConverter"></local:TouchEventArgsConverter>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.BindingContext>
+        <viewmodel:WorkflowGraphViewModel></viewmodel:WorkflowGraphViewModel>
+    </ContentView.BindingContext>
+
+    <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{StaticResource GraphDrawing}">
+        <GraphicsView.Behaviors>
+            <toolkit:EventToCommandBehavior 
+                EventName="StartInteraction"
+                Command="{Binding TouchCommand}"
+                EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+            </toolkit:EventToCommandBehavior>
+        </GraphicsView.Behaviors>
+        <!--<GraphicsView.GestureRecognizers>
+            <TapGestureRecognizer x:Name="TapGesture" Command="{Binding OnStartInteraction}" CommandParameter="{x:Reference TapGesture}">
+
+            </TapGestureRecognizer>
+        </GraphicsView.GestureRecognizers>-->
+    </GraphicsView>
+</ContentView>

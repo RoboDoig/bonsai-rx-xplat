@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:bonsai_rx_xplat.Models"
+             xmlns:view="clr-namespace:bonsai_rx_xplat.Views"
+             xmlns:viewmodel="clr-namespace:bonsai_rx_xplat.ViewModels"
+             x:Class="bonsai_rx_xplat.Views.MainPage">
+
+    <ContentPage.BindingContext>
+        <viewmodel:MainPageViewModel></viewmodel:MainPageViewModel>
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="10" Padding="10">
+
+            <CollectionView ItemsSource="{Binding Nodes}" ItemsLayout="HorizontalList" SelectionMode="Single" HorizontalOptions="CenterAndExpand">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Node">
+                        <VerticalStackLayout>
+                            <Label Text="Node"></Label>
+                            <Label Text="{Binding Name}"></Label>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button x:Name="AddButton" HorizontalOptions="Center" Text="Add" Command="{Binding AddNodeCommand}"></Button>
+
+            <Border Stroke="#00000" StrokeThickness="4">
+                <view:WorkflowGraph HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>
+            </Border>
+
+            <Button x:Name="WorkflowBtn" Text="Start" HorizontalOptions="Center"  Command="{Binding WorkflowTriggerCommand}" CommandParameter="{x:Reference WorkflowBtn}"></Button>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
