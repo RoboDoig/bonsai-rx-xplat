@@ -5,11 +5,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:bonsai_rx_xplat"
     xmlns:views="clr-namespace:bonsai_rx_xplat.Views"
-    Shell.FlyoutBehavior="Disabled">
+    FlyoutHeaderBehavior="Default">
 
-    <ShellContent
-        Title="Bonsai Mobile"
-        ContentTemplate="{DataTemplate views:MainPage}"
-        Route="MainPage" />
-
+    <FlyoutItem Title="Workflow">
+        <Tab>
+            <ShellContent
+                Title="Bonsai Mobile"
+                ContentTemplate="{DataTemplate views:MainPage}"
+                Route="MainPage" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Nodes">
+        <Tab>
+            <ShellContent
+                Title="Nodes"
+                ContentTemplate="{DataTemplate views:NodeSelection}"
+                Route="NodeSelection" />
+        </Tab>
+    </FlyoutItem>
 </Shell>
