@@ -13,21 +13,26 @@ using bonsai_rx_xplat.Models;
 
 namespace bonsai_rx_xplat.ViewModels
 {
+    [QueryProperty("AddNode", "AddNode")]
     public class MainPageViewModel
     {
         ExpressionBuilderGraph Workflow;
         IDisposable Running;
-        public ObservableCollection<Node> Nodes { get; set; } = new();
 
-        public Command AddNodeCommand { get; private set; }
+        private Node addNode;
+        public Node AddNode {
+            get { return addNode; }
+            set
+            {
+                addNode = value;
+                System.Diagnostics.Debug.WriteLine(addNode.Name);
+            }
+        }
+
         public Command WorkflowTriggerCommand { get; private set; }
 
         public MainPageViewModel()
         {
-            Nodes.Add(new Node { Name = "Timer" });
-            Nodes.Add(new Node { Name = "Take" });
-
-            AddNodeCommand = new Command(() => { System.Diagnostics.Debug.WriteLine("Add button clicked, not implemented"); });
             WorkflowTriggerCommand = new Command(WorkflowTrigger);
         }
 

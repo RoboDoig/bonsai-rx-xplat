@@ -2,14 +2,29 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="bonsai_rx_xplat.Views.NodeSelection"
+             xmlns:model="clr-namespace:bonsai_rx_xplat.Models"
              xmlns:viewmodel="clr-namespace:bonsai_rx_xplat.ViewModels"
              Title="NodeSelection">
 
     <ContentPage.BindingContext>
         <viewmodel:NodeSelectionViewModel></viewmodel:NodeSelectionViewModel>
     </ContentPage.BindingContext>
-    
-    <VerticalStackLayout>
-        <Button x:Name="BackBtn" Text="Back" Command="{Binding GoToMainPageCommand}"></Button>
-    </VerticalStackLayout>
+
+    <CollectionView ItemsSource="{Binding Nodes}" SelectionMode="Single">
+        <CollectionView.ItemTemplate>
+            
+            <DataTemplate x:DataType="model:Node">
+                <Frame HeightRequest="125" Padding="10">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer 
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:NodeSelectionViewModel}}, Path=SelectNodeCommand}"
+                            CommandParameter="{Binding .}">
+                        </TapGestureRecognizer>
+                    </Frame.GestureRecognizers>
+                    <Label Text="{Binding Name}"></Label>
+                </Frame>
+            </DataTemplate>
+            
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
