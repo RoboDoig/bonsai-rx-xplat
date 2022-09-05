@@ -18,19 +18,18 @@ namespace bonsai_rx_xplat.ViewModels
 
         public WorkflowGraphViewModel()
         {
-            // TODO - init new transforms
-            DrawnTransforms.Add(new DrawnLine(PixelReference, new PointF(10, 10), new Point(90, 100), 6, Colors.Red));
-            DrawnTransforms.Add(new DrawnLine(PixelReference, new PointF(20, 10), new Point(80, 70), 6, Colors.Blue));
+            DrawnTransforms.Add(new DrawnRectangle(PixelReference, new PointF(10, 10), new Point(90, 100), 6, Colors.Red, Colors.Red));
+            DrawnTransforms.Add(new DrawnRectangle(PixelReference, new PointF(120, 10), new Point(80, 70), 6, Colors.Blue, Colors.Blue));
 
             StartInteractionCommand = new Command((eventArgs) => {
                 var point = eventArgs as PointF[];
-                //System.Diagnostics.Debug.WriteLine(point[0].X);
-                //System.Diagnostics.Debug.WriteLine(point[0].Y);
 
-                Tuple<int, int> pixelPos = new Tuple<int, int>((int)point[0].X, (int)point[0].Y);
-                if (PixelReference.ContainsKey(pixelPos))
+                foreach (var transform in DrawnTransforms)
                 {
-                    System.Diagnostics.Debug.WriteLine(PixelReference[pixelPos]);
+                    if (transform.ContainsPoint(point[0]))
+                    {
+                        System.Diagnostics.Debug.WriteLine(transform);
+                    }
                 }
             });
 
@@ -55,8 +54,6 @@ namespace bonsai_rx_xplat.ViewModels
             }
         }
 
-
-
         // TODO - move transforms to some drawing class
         public class DrawnTransform
         {
@@ -69,36 +66,44 @@ namespace bonsai_rx_xplat.ViewModels
             {
 
             }
+
+            public virtual bool ContainsPoint(PointF point)
+            {
+                return false;
+            }
         }
 
-        public class DrawnLine : DrawnTransform
+        public class DrawnRectangle : DrawnTransform
         {
             private PointF StartPoint;
             private PointF EndPoint;
             private float StrokeSize;
             private Color StrokeColor;
+            private Color FillColor;
 
-            public DrawnLine(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference,
-                PointF startPoint, PointF endPoint, float strokeSize, Color strokeColor) : base(pixelReference)
+            public DrawnRectangle(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference,
+                PointF startPoint, PointF endPoint, float strokeSize, Color strokeColor, Color fillColor) : base(pixelReference)
             {
                 StartPoint = new PointF(startPoint.X, startPoint.Y);
                 EndPoint = new PointF(endPoint.X, endPoint.Y);
                 StrokeSize = strokeSize;
                 StrokeColor = strokeColor;
-
-                // Update occupied pixels - bresenham algorithm
-                foreach (Tuple<int, int> pixelLoc in DrawingHelpers.LinePixels((int)StartPoint.X, (int)StartPoint.Y, (int)EndPoint.X, (int)EndPoint.Y)
-                {
-                    pixelReference[pixelLoc] = this;
-                }
+                FillColor = fillColor;
             }
 
             public override void Draw(ICanvas canvas, RectF dirtyRect)
             {
                 base.Draw(canvas, dirtyRect);
                 canvas.StrokeColor = StrokeColor;
+                canvas.FillColor = FillColor;
                 canvas.StrokeSize = StrokeSize;
-                canvas.DrawLine(StartPoint, EndPoint);
+                canvas.FillRectangle(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+            }
+
+            public override bool ContainsPoint(PointF point)
+            {
+                RectF boundingRect = new RectF(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+                return boundingRect.Contains(point);
             }
         }
     }
