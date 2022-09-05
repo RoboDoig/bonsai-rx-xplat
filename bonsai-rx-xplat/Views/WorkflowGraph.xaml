@@ -22,7 +22,13 @@
         <GraphicsView.Behaviors>
             <toolkit:EventToCommandBehavior 
                 EventName="StartInteraction"
-                Command="{Binding TouchCommand}"
+                Command="{Binding StartInteractionCommand}"
+                EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+            </toolkit:EventToCommandBehavior>
+
+            <toolkit:EventToCommandBehavior 
+                EventName="EndInteraction"
+                Command="{Binding EndInteractionCommand}"
                 EventArgsConverter="{StaticResource TouchEventArgsConverter}">
             </toolkit:EventToCommandBehavior>
 
