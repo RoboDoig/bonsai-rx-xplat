@@ -12,20 +12,6 @@
 
     <ScrollView>
         <VerticalStackLayout Spacing="10" Padding="10">
-
-            <CollectionView ItemsSource="{Binding Nodes}" ItemsLayout="HorizontalList" SelectionMode="Single" HorizontalOptions="CenterAndExpand">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:Node">
-                        <VerticalStackLayout>
-                            <Label Text="Node"></Label>
-                            <Label Text="{Binding Name}"></Label>
-                        </VerticalStackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
-            <Button x:Name="AddButton" HorizontalOptions="Center" Text="Add" Command="{Binding AddNodeCommand}"></Button>
-
             <Border Stroke="#00000" StrokeThickness="4">
                 <view:WorkflowGraph HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>
             </Border>
