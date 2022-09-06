@@ -18,7 +18,7 @@
         <viewmodel:WorkflowGraphViewModel></viewmodel:WorkflowGraphViewModel>
     </ContentView.BindingContext>-->
 
-    <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{StaticResource GraphDrawing}" StartInteraction="Redraw">
+    <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{StaticResource GraphDrawing}">
         <GraphicsView.Behaviors>
             <toolkit:EventToCommandBehavior 
                 EventName="StartInteraction"
@@ -36,6 +36,24 @@
                 EventName="DragInteraction"
                 Command="{Binding Source={StaticResource GraphDrawing}, Path=DragCommand}"
                 EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+            </toolkit:EventToCommandBehavior>
+
+            <toolkit:EventToCommandBehavior 
+                EventName="StartInteraction"
+                Command="{Binding Source={StaticResource GraphDrawing}, Path=CanvasInteractionCommand}"
+                CommandParameter="{x:Reference WorkflowView}">
+            </toolkit:EventToCommandBehavior>
+
+            <toolkit:EventToCommandBehavior 
+                EventName="EndInteraction"
+                Command="{Binding Source={StaticResource GraphDrawing}, Path=CanvasInteractionCommand}"
+                CommandParameter="{x:Reference WorkflowView}">
+            </toolkit:EventToCommandBehavior>
+
+            <toolkit:EventToCommandBehavior 
+                EventName="DragInteraction"
+                Command="{Binding Source={StaticResource GraphDrawing}, Path=CanvasInteractionCommand}"
+                CommandParameter="{x:Reference WorkflowView}">
             </toolkit:EventToCommandBehavior>
         </GraphicsView.Behaviors>
     </GraphicsView>

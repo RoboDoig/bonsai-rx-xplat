@@ -8,10 +8,4 @@ public partial class WorkflowGraph : ContentView
 	{
 		InitializeComponent();
 	}
-
-	private void Redraw(object sender, TouchEventArgs e)
-	{
-		System.Diagnostics.Debug.WriteLine("Redraw");
-		WorkflowView.Invalidate();
-	}
 }
