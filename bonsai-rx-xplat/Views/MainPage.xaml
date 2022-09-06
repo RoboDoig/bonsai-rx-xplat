@@ -4,16 +4,32 @@
              xmlns:model="clr-namespace:bonsai_rx_xplat.Models"
              xmlns:view="clr-namespace:bonsai_rx_xplat.Views"
              xmlns:viewmodel="clr-namespace:bonsai_rx_xplat.ViewModels"
+             xmlns:local="clr-namespace:bonsai_rx_xplat"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="bonsai_rx_xplat.Views.MainPage">
 
     <ContentPage.BindingContext>
         <viewmodel:MainPageViewModel></viewmodel:MainPageViewModel>
     </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:TouchEventArgsConverter x:Key="TouchEventArgsConverter"></local:TouchEventArgsConverter>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <VerticalStackLayout Spacing="10" Padding="10">
             <Border Stroke="#00000" StrokeThickness="4">
-                <view:WorkflowGraph x:Name="WorkflowGraph" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>
+                <!--<view:WorkflowGraph x:Name="WorkflowGraph" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>-->
+                <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
+                    <GraphicsView.Behaviors>
+                        <toolkit:EventToCommandBehavior
+                            EventName="StartInteraction"
+                            Command="{Binding StartInteractionCommand}"
+                            EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+                        </toolkit:EventToCommandBehavior>
+                    </GraphicsView.Behaviors>
+                </GraphicsView>
             </Border>
 
             <Button x:Name="WorkflowBtn" Text="Start" HorizontalOptions="Center"  Command="{Binding WorkflowTriggerCommand}" CommandParameter="{x:Reference WorkflowBtn}"></Button>

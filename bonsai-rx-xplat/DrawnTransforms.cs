@@ -8,8 +8,8 @@ namespace bonsai_rx_xplat
 {
     public class DrawnTransform
     {
-        public Color FillColor;
-        public DrawnTransform(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference)
+        protected Color FillColor;
+        public DrawnTransform()
         {
 
         }
@@ -32,16 +32,17 @@ namespace bonsai_rx_xplat
 
     public class DrawnRectangle : DrawnTransform
     {
-        private PointF StartPoint;
-        private PointF EndPoint;
-        private float StrokeSize;
-        private Color StrokeColor;
+        protected PointF StartPoint;
+        protected float Width;
+        protected float Height;
+        protected float StrokeSize;
+        protected Color StrokeColor;
 
-        public DrawnRectangle(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference,
-            PointF startPoint, PointF endPoint, float strokeSize, Color strokeColor, Color fillColor) : base(pixelReference)
+        public DrawnRectangle(PointF startPoint, float width, float height, float strokeSize, Color strokeColor, Color fillColor)
         {
             StartPoint = new PointF(startPoint.X, startPoint.Y);
-            EndPoint = new PointF(endPoint.X, endPoint.Y);
+            Width = width;
+            Height = height;
             StrokeSize = strokeSize;
             StrokeColor = strokeColor;
             FillColor = fillColor;
@@ -53,18 +54,34 @@ namespace bonsai_rx_xplat
             canvas.StrokeColor = StrokeColor;
             canvas.FillColor = FillColor;
             canvas.StrokeSize = StrokeSize;
-            canvas.FillRectangle(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+            canvas.FillRectangle(StartPoint.X, StartPoint.Y, Width, Height);
         }
 
         public override bool ContainsPoint(PointF point)
         {
-            RectF boundingRect = new RectF(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
+            RectF boundingRect = new RectF(StartPoint.X, StartPoint.Y, Width, Height);
             return boundingRect.Contains(point);
         }
 
         public override void OnSelect()
         {
             FillColor = Colors.Blue;
+        }
+    }
+
+    public class DrawnLabeledRectangle : DrawnRectangle
+    {
+        protected string Label;
+
+        public DrawnLabeledRectangle(PointF startPoint, float width, float height, float strokeSize, Color strokeColor, Color fillColor, string label) : base(startPoint, width, height, strokeSize, strokeColor, fillColor)
+        {
+            Label = label;
+        }
+
+        public override void Draw(ICanvas canvas, RectF dirtyRect)
+        {
+            base.Draw(canvas, dirtyRect);
+            canvas.DrawString(Label, StartPoint.X + (Width / 2), StartPoint.Y + (Height / 2), HorizontalAlignment.Center);
         }
     }
 }
