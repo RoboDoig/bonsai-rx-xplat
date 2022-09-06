@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Graphics.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -14,36 +15,36 @@ namespace bonsai_rx_xplat.ViewModels
         public Command EndInteractionCommand { get; set; }
         public Command DragCommand { get; set; }
         private Dictionary<Tuple<int, int>, DrawnTransform> PixelReference = new();
-        private List<DrawnTransform> DrawnTransforms = new();
+        public ObservableCollection<DrawnTransform> DrawnTransforms { get; set; } = new();
 
         public WorkflowGraphViewModel()
         {
-            DrawnTransforms.Add(new DrawnRectangle(PixelReference, new PointF(10, 10), new Point(90, 100), 6, Colors.Red, Colors.Red));
-            DrawnTransforms.Add(new DrawnRectangle(PixelReference, new PointF(120, 10), new Point(80, 70), 6, Colors.Blue, Colors.Blue));
+            System.Diagnostics.Debug.WriteLine("WorkflowGraph");
+            DrawnTransforms.Add(new DrawnRectangle(PixelReference, new PointF(10, 10), new Point(90, 100), 6, Colors.Red, Colors.Black));
 
-            StartInteractionCommand = new Command((eventArgs) => {
-                var point = eventArgs as PointF[];
-
-                foreach (var transform in DrawnTransforms)
-                {
-                    if (transform.ContainsPoint(point[0]))
-                    {
-                        System.Diagnostics.Debug.WriteLine(transform);
-                    }
-                }
-            });
+            StartInteractionCommand = new Command(StartInteraction);
 
             EndInteractionCommand = new Command((eventArgs) => {
                 var point = eventArgs as PointF[];
-                //System.Diagnostics.Debug.WriteLine("End");
             });
 
             DragCommand = new Command((eventArgs) =>
             {
                 var point = eventArgs as PointF[];
-                //System.Diagnostics.Debug.WriteLine(point[0].X);
-                //System.Diagnostics.Debug.WriteLine(point[0].Y);
             });
+        }
+
+        private void StartInteraction(object eventArgs)
+        {
+            var point = eventArgs as PointF[];
+
+            foreach (var transform in DrawnTransforms)
+            {
+                if (transform.ContainsPoint(point[0]))
+                {
+                    transform.OnSelect();
+                }
+            }
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -57,6 +58,7 @@ namespace bonsai_rx_xplat.ViewModels
         // TODO - move transforms to some drawing class
         public class DrawnTransform
         {
+            public Color FillColor;
             public DrawnTransform(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference)
             {
 
@@ -71,6 +73,11 @@ namespace bonsai_rx_xplat.ViewModels
             {
                 return false;
             }
+
+            public virtual void OnSelect()
+            {
+
+            }
         }
 
         public class DrawnRectangle : DrawnTransform
@@ -79,7 +86,6 @@ namespace bonsai_rx_xplat.ViewModels
             private PointF EndPoint;
             private float StrokeSize;
             private Color StrokeColor;
-            private Color FillColor;
 
             public DrawnRectangle(Dictionary<Tuple<int, int>, DrawnTransform> pixelReference,
                 PointF startPoint, PointF endPoint, float strokeSize, Color strokeColor, Color fillColor) : base(pixelReference)
@@ -104,6 +110,11 @@ namespace bonsai_rx_xplat.ViewModels
             {
                 RectF boundingRect = new RectF(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y);
                 return boundingRect.Contains(point);
+            }
+
+            public override void OnSelect()
+            {
+                FillColor = Colors.Blue;
             }
         }
     }
