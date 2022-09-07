@@ -72,10 +72,10 @@ namespace bonsai_rx_xplat.ViewModels
 
             // Temporary workflow build
             Workflow = new ExpressionBuilderGraph();
-            var timer = Workflow.Add(new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } });
-            var debug = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            var debug2 = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            Workflow.AddEdge(timer, debug, new ExpressionBuilderArgument());
+            //var timer = Workflow.Add(new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } });
+            //var debug = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
+            //var debug2 = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
+            //Workflow.AddEdge(timer, debug, new ExpressionBuilderArgument());
 
             // Draw information
             GraphCanvas = new GraphViewCanvas(Workflow);
@@ -111,6 +111,8 @@ namespace bonsai_rx_xplat.ViewModels
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             Node addNode = query["AddNode"] as Node;
+            Workflow.Add(addNode.Builder());
+            GraphCanvas.UpdateGraphViewCanvas(Workflow);
         }
 
         public class GraphNode
@@ -150,6 +152,17 @@ namespace bonsai_rx_xplat.ViewModels
             }
 
             public GraphViewCanvas(ExpressionBuilderGraph expressionBuilderGraph)
+            {
+                GraphNodes = new List<GraphNode>();
+                int offset = Offset;
+                foreach (var node in expressionBuilderGraph)
+                {
+                    GraphNodes.Add(new GraphNode(node, new Point(offset, 10)));
+                    offset += Spacing;
+                }
+            }
+
+            public void UpdateGraphViewCanvas(ExpressionBuilderGraph expressionBuilderGraph)
             {
                 GraphNodes = new List<GraphNode>();
                 int offset = Offset;

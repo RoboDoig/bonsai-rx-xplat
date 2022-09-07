@@ -11,6 +11,6 @@ namespace bonsai_rx_xplat.Models
     {
         public string Name { get; set; }
 
-        public CombinatorBuilder Builder;
+        public Func<CombinatorBuilder> Builder;
     }
 }
