@@ -23,10 +23,17 @@
                 <!--<view:WorkflowGraph x:Name="WorkflowGraph" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>-->
                 <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
                     <GraphicsView.Behaviors>
+                        
                         <toolkit:EventToCommandBehavior
                             EventName="StartInteraction"
                             Command="{Binding StartInteractionCommand}"
                             EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+                        </toolkit:EventToCommandBehavior>
+
+                        <toolkit:EventToCommandBehavior 
+                            EventName="EndInteraction"
+                            Command="{Binding CanvasInteractionCommand}"
+                            CommandParameter="{x:Reference WorkflowView}">
                         </toolkit:EventToCommandBehavior>
                     </GraphicsView.Behaviors>
                 </GraphicsView>

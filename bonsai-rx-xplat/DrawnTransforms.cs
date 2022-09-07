@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace bonsai_rx_xplat
 {
+    // Drawing logic for different canvas shapes
     public class DrawnTransform
     {
         protected Color FillColor;
+        protected Color DefaultFillColor;
+        protected Color SelectedFillColor;
         public DrawnTransform()
         {
 
@@ -28,6 +31,11 @@ namespace bonsai_rx_xplat
         {
 
         }
+
+        public virtual void OnDeselect()
+        {
+
+        }
     }
 
     public class DrawnRectangle : DrawnTransform
@@ -35,25 +43,21 @@ namespace bonsai_rx_xplat
         protected PointF StartPoint;
         protected float Width;
         protected float Height;
-        protected float StrokeSize;
-        protected Color StrokeColor;
 
-        public DrawnRectangle(PointF startPoint, float width, float height, float strokeSize, Color strokeColor, Color fillColor)
+        public DrawnRectangle(PointF startPoint, float width, float height, Color fillColor, Color selectedFillColor)
         {
             StartPoint = new PointF(startPoint.X, startPoint.Y);
             Width = width;
             Height = height;
-            StrokeSize = strokeSize;
-            StrokeColor = strokeColor;
             FillColor = fillColor;
+            DefaultFillColor = fillColor;
+            SelectedFillColor = selectedFillColor;
         }
 
         public override void Draw(ICanvas canvas, RectF dirtyRect)
         {
             base.Draw(canvas, dirtyRect);
-            canvas.StrokeColor = StrokeColor;
             canvas.FillColor = FillColor;
-            canvas.StrokeSize = StrokeSize;
             canvas.FillRectangle(StartPoint.X, StartPoint.Y, Width, Height);
         }
 
@@ -65,7 +69,12 @@ namespace bonsai_rx_xplat
 
         public override void OnSelect()
         {
-            FillColor = Colors.Blue;
+            FillColor = SelectedFillColor;
+        }
+
+        public override void OnDeselect()
+        {
+            FillColor = DefaultFillColor;
         }
     }
 
@@ -73,7 +82,8 @@ namespace bonsai_rx_xplat
     {
         protected string Label;
 
-        public DrawnLabeledRectangle(PointF startPoint, float width, float height, float strokeSize, Color strokeColor, Color fillColor, string label) : base(startPoint, width, height, strokeSize, strokeColor, fillColor)
+        public DrawnLabeledRectangle(PointF startPoint, float width, float height, Color fillColor, Color selectedFillColor, string label) 
+            : base(startPoint, width, height, fillColor, selectedFillColor)
         {
             Label = label;
         }

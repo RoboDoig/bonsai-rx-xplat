@@ -19,6 +19,7 @@ namespace bonsai_rx_xplat.ViewModels
 
         public Command WorkflowTriggerCommand { get; private set; }
         public Command StartInteractionCommand { get; private set; }
+        public Command CanvasInteractionCommand { get; private set; }
         public GraphViewCanvas GraphCanvas { get; set; }
 
         public MainPageViewModel()
@@ -26,6 +27,19 @@ namespace bonsai_rx_xplat.ViewModels
             StartInteractionCommand = new Command(eventArgs =>
             {
                 var point = eventArgs as PointF[];
+                foreach (var transform in GraphCanvas.DrawnTransforms)
+                {
+                    if (transform.ContainsPoint(point[0]))
+                    {
+                        transform.OnSelect();
+                    }
+                }
+            });
+
+            CanvasInteractionCommand = new Command(obj =>
+            {
+                var graphicsView = obj as GraphicsView;
+                GraphCanvas.Redraw(graphicsView);
             });
 
             WorkflowTriggerCommand = new Command(WorkflowTrigger);
@@ -91,7 +105,7 @@ namespace bonsai_rx_xplat.ViewModels
                 System.Diagnostics.Debug.WriteLine(offset);
                 foreach (var node in expressionBuilderGraph)
                 {
-                    DrawnTransforms.Add(new DrawnLabeledRectangle(new Point(offset, 10), 50, 50, 6, Colors.Blue, Colors.Blue, node.Value.ToString()));
+                    DrawnTransforms.Add(new DrawnLabeledRectangle(new Point(offset, 10), 50, 50, Colors.Blue, Colors.Red, node.Value.ToString()));
                     offset += Spacing;
                 }
             }
