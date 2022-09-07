@@ -29,11 +29,11 @@ namespace bonsai_rx_xplat.ViewModels
             //Nodes.Add(new Node { Name = "Router" });
             //Nodes.Add(new Node { Name = "Dealer" });
 
-            GoToMainPageCommand = new Command(async () => { await Shell.Current.GoToAsync("///MainPage"); });
+            GoToMainPageCommand = new Command(async () => { await Shell.Current.GoToAsync("///MainPage", true); });
 
             SelectNodeCommand = new Command<Node>(async node =>
             {
-                // Navigate to main page with selected node
+                // Navigate to main page with selected node 
                 await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true,
                     new Dictionary<string, object>
                     {

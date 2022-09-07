@@ -6,16 +6,27 @@ using System.Threading.Tasks;
 
 namespace bonsai_rx_xplat
 {
-    // Drawing logic for different canvas shapes
+    // Drawing logic for different canvas shapes - TODO should be abstract?
     public class DrawnTransform
     {
+        protected PointF StartPoint;
         protected Color FillColor;
         protected Color DefaultFillColor;
         protected Color SelectedFillColor;
         protected PointF LastClickedPoint;
         public virtual PointF Origin
         {
-            get;
+            get
+            {
+                return StartPoint;
+            }
+        }
+        public virtual PointF CenterOrigin
+        {
+            get
+            {
+                return StartPoint;
+            }
         }
         public DrawnTransform()
         {
@@ -32,7 +43,7 @@ namespace bonsai_rx_xplat
             return false;
         }
 
-        public virtual void SetPosition()
+        public virtual void SetPosition(PointF point)
         {
 
         }
@@ -55,10 +66,16 @@ namespace bonsai_rx_xplat
 
     public class DrawnRectangle : DrawnTransform
     {
-        protected PointF StartPoint;
         protected float Width;
         protected float Height;
         public override PointF Origin
+        {
+            get
+            {
+                return StartPoint;
+            }
+        }
+        public override PointF CenterOrigin // Origin not really origin in this context, rather center point, StartPoint is actualy 'origin' TODO
         {
             get
             {
@@ -81,6 +98,11 @@ namespace bonsai_rx_xplat
             base.Draw(canvas, dirtyRect);
             canvas.FillColor = FillColor;
             canvas.FillRectangle(StartPoint.X, StartPoint.Y, Width, Height);
+        }
+
+        public override void SetPosition(PointF point)
+        {
+            StartPoint = point;
         }
 
         public override bool ContainsPoint(PointF point)

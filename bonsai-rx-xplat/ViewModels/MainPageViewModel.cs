@@ -26,6 +26,7 @@ namespace bonsai_rx_xplat.ViewModels
         public GraphViewCanvas GraphCanvas { get; set; }
 
         private GraphNode LastSelectedGraphNode;
+        private GraphNode CurrentSelectedGraphNode;
 
         public MainPageViewModel()
         {
@@ -38,6 +39,7 @@ namespace bonsai_rx_xplat.ViewModels
                     if (graphNode.ContainsPoint(point[0]))
                     {
                         graphNode.OnSelect(point[0]);
+                        CurrentSelectedGraphNode = graphNode;
 
                         if (LastSelectedGraphNode != null && LastSelectedGraphNode != graphNode)
                         {
@@ -45,6 +47,7 @@ namespace bonsai_rx_xplat.ViewModels
                         }
 
                         LastSelectedGraphNode = graphNode;
+                        return;
                     }
                 }
             });
@@ -55,9 +58,27 @@ namespace bonsai_rx_xplat.ViewModels
                 var point = eventArgs as PointF[];
                 foreach (var graphNode in GraphCanvas.GraphNodes)
                 {
-                    if (graphNode.ContainsPoint(point[0]))
+                    if (graphNode.ContainsPoint(point[0]) && graphNode == CurrentSelectedGraphNode)
                     {
                         graphNode.OnDrag(point[0]);
+                        return;
+                    }
+                }
+            });
+
+            // End interaction
+            EndInteractionCommand = new Command(eventArgs =>
+            {
+                var point = eventArgs as PointF[];
+                foreach (var graphNode in GraphCanvas.GraphNodes)
+                {
+                    if (graphNode.ContainsPoint(point[0]) && graphNode != CurrentSelectedGraphNode)
+                    {
+                        // reset position
+                        CurrentSelectedGraphNode.SnapbackPosition();
+
+                        // add edge
+                        Workflow.AddEdge(CurrentSelectedGraphNode.Node, graphNode.Node, new ExpressionBuilderArgument());
                     }
                 }
             });
@@ -110,9 +131,12 @@ namespace bonsai_rx_xplat.ViewModels
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            Node addNode = query["AddNode"] as Node;
-            Workflow.Add(addNode.Builder());
-            GraphCanvas.UpdateGraphViewCanvas(Workflow);
+            if (query.Count > 0)
+            {
+                Node addNode = query["AddNode"] as Node;
+                Workflow.Add(addNode.Builder());
+                GraphCanvas.UpdateGraphViewCanvas(Workflow);
+            }
         }
 
         public class GraphNode
@@ -121,6 +145,8 @@ namespace bonsai_rx_xplat.ViewModels
             public DrawnTransform DrawnTransform;
             public List<GraphNode> Successors = new();
 
+            private PointF StartInteractionPosition;
+
             public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
             {
                 Node = node;
@@ -128,11 +154,20 @@ namespace bonsai_rx_xplat.ViewModels
             }
 
             public bool ContainsPoint(PointF point) => DrawnTransform.ContainsPoint(point);
-            public void OnSelect(PointF point) => DrawnTransform.OnSelect(point);
+            public void OnSelect(PointF point)
+            {
+                DrawnTransform.OnSelect(point);
+                StartInteractionPosition = DrawnTransform.Origin;
+            }
             public void OnDeselect() => DrawnTransform.OnDeselect();
             public void OnDrag(PointF point)
             {
                 DrawnTransform.OnDrag(point);
+            }
+            public void SetPosition(PointF point) => DrawnTransform.SetPosition(point);
+            public void SnapbackPosition()
+            {
+                DrawnTransform.SetPosition(StartInteractionPosition);
             }
             public void Draw(ICanvas canvas, RectF dirtyRect)
             {
@@ -186,7 +221,7 @@ namespace bonsai_rx_xplat.ViewModels
                         var targetGraphNode = GraphNodes.Where(x => x.Node == edge.Target).First();
                         canvas.StrokeSize = 2;
                         canvas.StrokeColor = Colors.Black;
-                        canvas.DrawLine(graphNode.DrawnTransform.Origin, targetGraphNode.DrawnTransform.Origin);
+                        canvas.DrawLine(graphNode.DrawnTransform.CenterOrigin, targetGraphNode.DrawnTransform.CenterOrigin);
                     }
                 }
             }
