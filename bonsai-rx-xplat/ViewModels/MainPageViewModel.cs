@@ -12,21 +12,10 @@ using bonsai_rx_xplat.Models;
 
 namespace bonsai_rx_xplat.ViewModels
 {
-    [QueryProperty("AddNode", "AddNode")]
-    public class MainPageViewModel
+    public class MainPageViewModel : IQueryAttributable
     {
         ExpressionBuilderGraph Workflow;
         IDisposable Running;
-
-        private Node addNode;
-        public Node AddNode {
-            get { return addNode; }
-            set
-            {
-                addNode = value;
-                System.Diagnostics.Debug.WriteLine(addNode.Name);
-            }
-        }
 
         public Command WorkflowTriggerCommand { get; private set; }
         public Command StartInteractionCommand { get; private set; }
@@ -38,6 +27,7 @@ namespace bonsai_rx_xplat.ViewModels
             {
                 var point = eventArgs as PointF[];
             });
+
             WorkflowTriggerCommand = new Command(WorkflowTrigger);
 
             // Temporary workflow build
@@ -76,6 +66,11 @@ namespace bonsai_rx_xplat.ViewModels
             Running.Dispose();
 
             Running = null;
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            Node addNode = query["AddNode"] as Node;
         }
 
         public class GraphViewCanvas : IDrawable

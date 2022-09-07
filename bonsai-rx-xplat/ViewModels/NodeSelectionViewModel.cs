@@ -33,7 +33,8 @@ namespace bonsai_rx_xplat.ViewModels
 
             SelectNodeCommand = new Command<Node>(async node =>
             {
-                await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true, 
+                // Navigate to main page with selected node
+                await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true,
                     new Dictionary<string, object>
                     {
                         {"AddNode", node}
