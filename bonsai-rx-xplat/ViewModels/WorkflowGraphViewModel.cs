@@ -47,7 +47,7 @@ namespace bonsai_rx_xplat.ViewModels
             {
                 if (transform.ContainsPoint(point[0]))
                 {
-                    transform.OnSelect();
+                    transform.OnSelect(point[0]);
                 }
             }
         }

@@ -24,6 +24,8 @@ namespace bonsai_rx_xplat.ViewModels
         public Command CanvasInteractionCommand { get; private set; }
         public GraphViewCanvas GraphCanvas { get; set; }
 
+        private DrawnTransform LastSelectedTransform;
+
         public MainPageViewModel()
         {
             StartInteractionCommand = new Command(eventArgs =>
@@ -33,7 +35,14 @@ namespace bonsai_rx_xplat.ViewModels
                 {
                     if (transform.ContainsPoint(point[0]))
                     {
-                        transform.OnSelect();
+                        transform.OnSelect(point[0]);
+
+                        if (LastSelectedTransform != null && LastSelectedTransform != transform)
+                        {
+                            LastSelectedTransform.OnDeselect();
+                        }
+
+                        LastSelectedTransform = transform;
                     }
                 }
             });

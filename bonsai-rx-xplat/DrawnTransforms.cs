@@ -12,6 +12,7 @@ namespace bonsai_rx_xplat
         protected Color FillColor;
         protected Color DefaultFillColor;
         protected Color SelectedFillColor;
+        protected PointF LastClickedPoint;
         public virtual PointF Origin
         {
             get;
@@ -31,7 +32,7 @@ namespace bonsai_rx_xplat
             return false;
         }
 
-        public virtual void OnSelect()
+        public virtual void OnSelect(PointF clickPosition)
         {
 
         }
@@ -83,9 +84,10 @@ namespace bonsai_rx_xplat
             return boundingRect.Contains(point);
         }
 
-        public override void OnSelect()
+        public override void OnSelect(PointF clickPosition)
         {
             FillColor = SelectedFillColor;
+            LastClickedPoint = clickPosition;
         }
 
         public override void OnDeselect()
@@ -95,7 +97,11 @@ namespace bonsai_rx_xplat
 
         public override void OnDrag(PointF dragPosition)
         {
-            StartPoint = dragPosition;
+            var relativePoint = dragPosition - LastClickedPoint;
+
+            StartPoint += relativePoint;
+
+            LastClickedPoint = dragPosition;
         }
     }
 
