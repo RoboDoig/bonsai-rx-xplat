@@ -40,6 +40,11 @@ namespace bonsai_rx_xplat
         {
 
         }
+
+        public virtual void OnDrag(PointF dragPosition)
+        {
+
+        }
     }
 
     public class DrawnRectangle : DrawnTransform
@@ -86,6 +91,11 @@ namespace bonsai_rx_xplat
         public override void OnDeselect()
         {
             FillColor = DefaultFillColor;
+        }
+
+        public override void OnDrag(PointF dragPosition)
+        {
+            StartPoint = dragPosition;
         }
     }
 

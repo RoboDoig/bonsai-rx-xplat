@@ -38,6 +38,18 @@ namespace bonsai_rx_xplat.ViewModels
                 }
             });
 
+            DragInteractionCommand = new Command(eventArgs =>
+            {
+                var point = eventArgs as PointF[];
+                foreach (var transform in GraphCanvas.DrawnTransforms)
+                {
+                    if (transform.ContainsPoint(point[0]))
+                    {
+                        transform.OnDrag(point[0]);
+                    }
+                }
+            });
+
             CanvasInteractionCommand = new Command(obj =>
             {
                 var graphicsView = obj as GraphicsView;
