@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Bonsai;
+using Bonsai.Dag;
 using Bonsai.Expressions;
 using bonsai_rx_xplat.Models;
 
@@ -24,7 +25,7 @@ namespace bonsai_rx_xplat.ViewModels
         public Command CanvasInteractionCommand { get; private set; }
         public GraphViewCanvas GraphCanvas { get; set; }
 
-        private DrawnTransform LastSelectedTransform;
+        private GraphNode LastSelectedGraphNode;
 
         public MainPageViewModel()
         {
@@ -32,18 +33,18 @@ namespace bonsai_rx_xplat.ViewModels
             StartInteractionCommand = new Command(eventArgs =>
             {
                 var point = eventArgs as PointF[];
-                foreach (var transform in GraphCanvas.NodeMapping.Values)
+                foreach (var graphNode in GraphCanvas.GraphNodes)
                 {
-                    if (transform.ContainsPoint(point[0]))
+                    if (graphNode.ContainsPoint(point[0]))
                     {
-                        transform.OnSelect(point[0]);
+                        graphNode.OnSelect(point[0]);
 
-                        if (LastSelectedTransform != null && LastSelectedTransform != transform)
+                        if (LastSelectedGraphNode != null && LastSelectedGraphNode != graphNode)
                         {
-                            LastSelectedTransform.OnDeselect();
+                            LastSelectedGraphNode.OnDeselect();
                         }
 
-                        LastSelectedTransform = transform;
+                        LastSelectedGraphNode = graphNode;
                     }
                 }
             });
@@ -52,11 +53,11 @@ namespace bonsai_rx_xplat.ViewModels
             DragInteractionCommand = new Command(eventArgs =>
             {
                 var point = eventArgs as PointF[];
-                foreach (var transform in GraphCanvas.NodeMapping.Values)
+                foreach (var graphNode in GraphCanvas.GraphNodes)
                 {
-                    if (transform.ContainsPoint(point[0]))
+                    if (graphNode.ContainsPoint(point[0]))
                     {
-                        transform.OnDrag(point[0]);
+                        graphNode.OnDrag(point[0]);
                     }
                 }
             });
@@ -112,9 +113,34 @@ namespace bonsai_rx_xplat.ViewModels
             Node addNode = query["AddNode"] as Node;
         }
 
+        public class GraphNode
+        {
+            public Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument> Node;
+            public DrawnTransform DrawnTransform;
+            public List<GraphNode> Successors = new();
+
+            public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
+            {
+                Node = node;
+                DrawnTransform = new DrawnLabeledRectangle(position, 50, 50, Colors.Blue, Colors.Red, node.Value.ToString());
+            }
+
+            public bool ContainsPoint(PointF point) => DrawnTransform.ContainsPoint(point);
+            public void OnSelect(PointF point) => DrawnTransform.OnSelect(point);
+            public void OnDeselect() => DrawnTransform.OnDeselect();
+            public void OnDrag(PointF point)
+            {
+                DrawnTransform.OnDrag(point);
+            }
+            public void Draw(ICanvas canvas, RectF dirtyRect)
+            {
+                DrawnTransform.Draw(canvas, dirtyRect);
+            }
+        }
+
         public class GraphViewCanvas : IDrawable
         {
-            public Dictionary<Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument>, DrawnTransform> NodeMapping = new();
+            public List<GraphNode> GraphNodes = new();
             int Offset = 10;
             int Spacing = 100;
 
@@ -125,20 +151,30 @@ namespace bonsai_rx_xplat.ViewModels
 
             public GraphViewCanvas(ExpressionBuilderGraph expressionBuilderGraph)
             {
-                NodeMapping = new Dictionary<Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument>, DrawnTransform>();
+                GraphNodes = new List<GraphNode>();
                 int offset = Offset;
                 foreach (var node in expressionBuilderGraph)
                 {
-                    NodeMapping.Add(node, new DrawnLabeledRectangle(new Point(offset, 10), 50, 50, Colors.Blue, Colors.Red, node.Value.ToString()));
+                    GraphNodes.Add(new GraphNode(node, new Point(offset, 10)));
                     offset += Spacing;
                 }
             }
 
             public void Draw(ICanvas canvas, RectF dirtyRect)
             {
-                foreach (var transform in NodeMapping.Values)
+                foreach (var graphNode in GraphNodes)
                 {
-                    transform.Draw(canvas, dirtyRect);
+                    // Draw the node itself
+                    graphNode.Draw(canvas, dirtyRect);
+
+                    // Draw successor edges
+                    foreach (var edge in graphNode.Node.Successors)
+                    {
+                        var targetGraphNode = GraphNodes.Where(x => x.Node == edge.Target).First();
+                        canvas.StrokeSize = 2;
+                        canvas.StrokeColor = Colors.Black;
+                        canvas.DrawLine(graphNode.DrawnTransform.Origin, targetGraphNode.DrawnTransform.Origin);
+                    }
                 }
             }
 

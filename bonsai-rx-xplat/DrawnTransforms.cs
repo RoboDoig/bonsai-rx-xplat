@@ -32,6 +32,11 @@ namespace bonsai_rx_xplat
             return false;
         }
 
+        public virtual void SetPosition()
+        {
+
+        }
+
         public virtual void OnSelect(PointF clickPosition)
         {
 
