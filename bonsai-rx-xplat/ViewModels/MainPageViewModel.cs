@@ -28,10 +28,11 @@ namespace bonsai_rx_xplat.ViewModels
 
         public MainPageViewModel()
         {
+            // Start interaction
             StartInteractionCommand = new Command(eventArgs =>
             {
                 var point = eventArgs as PointF[];
-                foreach (var transform in GraphCanvas.DrawnTransforms)
+                foreach (var transform in GraphCanvas.NodeMapping.Values)
                 {
                     if (transform.ContainsPoint(point[0]))
                     {
@@ -47,10 +48,11 @@ namespace bonsai_rx_xplat.ViewModels
                 }
             });
 
+            // Drag interaction
             DragInteractionCommand = new Command(eventArgs =>
             {
                 var point = eventArgs as PointF[];
-                foreach (var transform in GraphCanvas.DrawnTransforms)
+                foreach (var transform in GraphCanvas.NodeMapping.Values)
                 {
                     if (transform.ContainsPoint(point[0]))
                     {
@@ -112,7 +114,7 @@ namespace bonsai_rx_xplat.ViewModels
 
         public class GraphViewCanvas : IDrawable
         {
-            public List<DrawnTransform> DrawnTransforms { get; set; } = new();
+            public Dictionary<Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument>, DrawnTransform> NodeMapping = new();
             int Offset = 10;
             int Spacing = 100;
 
@@ -123,19 +125,18 @@ namespace bonsai_rx_xplat.ViewModels
 
             public GraphViewCanvas(ExpressionBuilderGraph expressionBuilderGraph)
             {
-                DrawnTransforms = new List<DrawnTransform>();
+                NodeMapping = new Dictionary<Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument>, DrawnTransform>();
                 int offset = Offset;
-                System.Diagnostics.Debug.WriteLine(offset);
                 foreach (var node in expressionBuilderGraph)
                 {
-                    DrawnTransforms.Add(new DrawnLabeledRectangle(new Point(offset, 10), 50, 50, Colors.Blue, Colors.Red, node.Value.ToString()));
+                    NodeMapping.Add(node, new DrawnLabeledRectangle(new Point(offset, 10), 50, 50, Colors.Blue, Colors.Red, node.Value.ToString()));
                     offset += Spacing;
                 }
             }
 
             public void Draw(ICanvas canvas, RectF dirtyRect)
             {
-                foreach (var transform in DrawnTransforms)
+                foreach (var transform in NodeMapping.Values)
                 {
                     transform.Draw(canvas, dirtyRect);
                 }
