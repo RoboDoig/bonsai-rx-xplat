@@ -12,6 +12,10 @@ namespace bonsai_rx_xplat
         protected Color FillColor;
         protected Color DefaultFillColor;
         protected Color SelectedFillColor;
+        public virtual PointF Origin
+        {
+            get;
+        }
         public DrawnTransform()
         {
 
@@ -43,6 +47,13 @@ namespace bonsai_rx_xplat
         protected PointF StartPoint;
         protected float Width;
         protected float Height;
+        public override PointF Origin
+        {
+            get
+            {
+                return new PointF(StartPoint.X + (Width / 2), StartPoint.Y + (Height / 2));
+            }
+        }
 
         public DrawnRectangle(PointF startPoint, float width, float height, Color fillColor, Color selectedFillColor)
         {
