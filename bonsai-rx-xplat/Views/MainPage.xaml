@@ -30,11 +30,36 @@
                             EventArgsConverter="{StaticResource TouchEventArgsConverter}">
                         </toolkit:EventToCommandBehavior>
 
+                        <toolkit:EventToCommandBehavior
+                            EventName="EndInteraction"
+                            Command="{Binding EndInteractionCommand}"
+                            EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+                        </toolkit:EventToCommandBehavior>
+
+                        <toolkit:EventToCommandBehavior
+                            EventName="DragInteraction"
+                            Command="{Binding DragInteractionCommand}"
+                            EventArgsConverter="{StaticResource TouchEventArgsConverter}">
+                        </toolkit:EventToCommandBehavior>
+
+                        <toolkit:EventToCommandBehavior 
+                            EventName="StartInteraction"
+                            Command="{Binding CanvasInteractionCommand}"
+                            CommandParameter="{x:Reference WorkflowView}">
+                        </toolkit:EventToCommandBehavior>
+
                         <toolkit:EventToCommandBehavior 
                             EventName="EndInteraction"
                             Command="{Binding CanvasInteractionCommand}"
                             CommandParameter="{x:Reference WorkflowView}">
                         </toolkit:EventToCommandBehavior>
+
+                        <toolkit:EventToCommandBehavior 
+                            EventName="DragInteraction"
+                            Command="{Binding CanvasInteractionCommand}"
+                            CommandParameter="{x:Reference WorkflowView}">
+                        </toolkit:EventToCommandBehavior>
+                        
                     </GraphicsView.Behaviors>
                 </GraphicsView>
             </Border>

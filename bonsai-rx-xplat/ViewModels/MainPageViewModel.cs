@@ -19,6 +19,8 @@ namespace bonsai_rx_xplat.ViewModels
 
         public Command WorkflowTriggerCommand { get; private set; }
         public Command StartInteractionCommand { get; private set; }
+        public Command EndInteractionCommand { get; private set; }
+        public Command DragInteractionCommand { get; private set; }
         public Command CanvasInteractionCommand { get; private set; }
         public GraphViewCanvas GraphCanvas { get; set; }
 
