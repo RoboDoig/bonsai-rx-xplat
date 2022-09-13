@@ -22,6 +22,7 @@ namespace bonsai_rx_xplat.ViewModels
         {
             Nodes.Add(new Node { Name = "Timer", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } } });
             Nodes.Add(new Node { Name = "Take", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Take { Count = 5 } } });
+            Nodes.Add(new Node { Name = "Debug", Builder = () => new CombinatorBuilder { Combinator = new DebugSink() } });
             //Nodes.Add(new Node { Name = "TakeUntil" });
             //Nodes.Add(new Node { Name = "SelectMany" });
             //Nodes.Add(new Node { Name = "CameraCapture" });
@@ -33,7 +34,7 @@ namespace bonsai_rx_xplat.ViewModels
 
             SelectNodeCommand = new Command<Node>(async node =>
             {
-                // Navigate to main page with selected node 
+                // Navigate to main page with selected node
                 await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true,
                     new Dictionary<string, object>
                     {
@@ -41,6 +42,14 @@ namespace bonsai_rx_xplat.ViewModels
                     }    
                 );
             });
+        }
+
+        class DebugSink : Sink
+        {
+            public override IObservable<TSource> Process<TSource>(IObservable<TSource> source)
+            {
+                return source.Do(val => System.Diagnostics.Debug.WriteLine(val.ToString()));
+            }
         }
     }
 }

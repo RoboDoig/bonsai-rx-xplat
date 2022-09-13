@@ -231,13 +231,5 @@ namespace bonsai_rx_xplat.ViewModels
                 graphicsView.Invalidate();
             }
         }
-
-        class DebugSink : Sink
-        {
-            public override IObservable<TSource> Process<TSource>(IObservable<TSource> source)
-            {
-                return source.Do(val => System.Diagnostics.Debug.WriteLine(val.ToString()));
-            }
-        }
     }
 }
