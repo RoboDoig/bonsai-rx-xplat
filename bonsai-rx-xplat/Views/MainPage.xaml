@@ -20,7 +20,6 @@
     <ScrollView>
         <VerticalStackLayout Spacing="10" Padding="10">
             <Border Stroke="#00000" StrokeThickness="4">
-                <!--<view:WorkflowGraph x:Name="WorkflowGraph" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500"></view:WorkflowGraph>-->
                 <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
                     <GraphicsView.Behaviors>
                         

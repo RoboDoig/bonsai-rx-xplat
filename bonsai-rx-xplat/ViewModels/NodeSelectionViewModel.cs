@@ -23,12 +23,6 @@ namespace bonsai_rx_xplat.ViewModels
             Nodes.Add(new Node { Name = "Timer", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } } });
             Nodes.Add(new Node { Name = "Take", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Take { Count = 5 } } });
             Nodes.Add(new Node { Name = "Debug", Builder = () => new CombinatorBuilder { Combinator = new DebugSink() } });
-            //Nodes.Add(new Node { Name = "TakeUntil" });
-            //Nodes.Add(new Node { Name = "SelectMany" });
-            //Nodes.Add(new Node { Name = "CameraCapture" });
-            //Nodes.Add(new Node { Name = "Arduino" });
-            //Nodes.Add(new Node { Name = "Router" });
-            //Nodes.Add(new Node { Name = "Dealer" });
 
             GoToMainPageCommand = new Command(async () => { await Shell.Current.GoToAsync("///MainPage", true); });
 
