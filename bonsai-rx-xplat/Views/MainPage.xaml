@@ -17,54 +17,53 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="10" Padding="10">
-            <Border Stroke="#00000" StrokeThickness="4">
-                <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
-                    <GraphicsView.Behaviors>
-                        
-                        <toolkit:EventToCommandBehavior
+    <!--Graphics view cannot be inside a scrollview or it will drop drag events-->
+    <VerticalStackLayout Spacing="10" Padding="10">
+        <Border Stroke="#00000" StrokeThickness="4">
+            <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
+                <GraphicsView.Behaviors>
+
+                    <toolkit:EventToCommandBehavior
                             EventName="StartInteraction"
                             Command="{Binding StartInteractionCommand}"
                             EventArgsConverter="{StaticResource TouchEventArgsConverter}">
-                        </toolkit:EventToCommandBehavior>
+                    </toolkit:EventToCommandBehavior>
 
-                        <toolkit:EventToCommandBehavior
+                    <toolkit:EventToCommandBehavior
                             EventName="EndInteraction"
                             Command="{Binding EndInteractionCommand}"
                             EventArgsConverter="{StaticResource TouchEventArgsConverter}">
-                        </toolkit:EventToCommandBehavior>
+                    </toolkit:EventToCommandBehavior>
 
-                        <toolkit:EventToCommandBehavior
+                    <toolkit:EventToCommandBehavior
                             EventName="DragInteraction"
                             Command="{Binding DragInteractionCommand}"
                             EventArgsConverter="{StaticResource TouchEventArgsConverter}">
-                        </toolkit:EventToCommandBehavior>
+                    </toolkit:EventToCommandBehavior>
 
-                        <toolkit:EventToCommandBehavior 
+                    <toolkit:EventToCommandBehavior 
                             EventName="StartInteraction"
                             Command="{Binding CanvasInteractionCommand}"
                             CommandParameter="{x:Reference WorkflowView}">
-                        </toolkit:EventToCommandBehavior>
+                    </toolkit:EventToCommandBehavior>
 
-                        <toolkit:EventToCommandBehavior 
+                    <toolkit:EventToCommandBehavior 
                             EventName="EndInteraction"
                             Command="{Binding CanvasInteractionCommand}"
                             CommandParameter="{x:Reference WorkflowView}">
-                        </toolkit:EventToCommandBehavior>
+                    </toolkit:EventToCommandBehavior>
 
-                        <toolkit:EventToCommandBehavior 
+                    <toolkit:EventToCommandBehavior 
                             EventName="DragInteraction"
                             Command="{Binding CanvasInteractionCommand}"
                             CommandParameter="{x:Reference WorkflowView}">
-                        </toolkit:EventToCommandBehavior>
-                        
-                    </GraphicsView.Behaviors>
-                </GraphicsView>
-            </Border>
+                    </toolkit:EventToCommandBehavior>
 
-            <Button x:Name="WorkflowBtn" Text="Start" HorizontalOptions="Center"  Command="{Binding WorkflowTriggerCommand}" CommandParameter="{x:Reference WorkflowBtn}"></Button>
+                </GraphicsView.Behaviors>
+            </GraphicsView>
+        </Border>
 
-        </VerticalStackLayout>
-    </ScrollView>
+        <Button x:Name="WorkflowBtn" Text="Start" HorizontalOptions="Center"  Command="{Binding WorkflowTriggerCommand}" CommandParameter="{x:Reference WorkflowBtn}"></Button>
+
+    </VerticalStackLayout>
 </ContentPage>
