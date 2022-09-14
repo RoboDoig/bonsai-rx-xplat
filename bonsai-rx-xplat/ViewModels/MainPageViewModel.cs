@@ -78,8 +78,17 @@ namespace bonsai_rx_xplat.ViewModels
                         // reset position
                         CurrentSelectedGraphNode.SnapbackPosition();
 
-                        // add edge
-                        Workflow.AddEdge(CurrentSelectedGraphNode.Node, graphNode.Node, new ExpressionBuilderArgument());
+                        // add / remove edge
+                        // if no edge to target exists, create it
+                        if (!CurrentSelectedGraphNode.Node.Successors.Any(x => x.Target == graphNode.Node))
+                        {
+                            Workflow.AddEdge(CurrentSelectedGraphNode.Node, graphNode.Node, new ExpressionBuilderArgument());
+                        }
+                        // else remove the existing edge
+                        else
+                        {
+                            Workflow.RemoveEdge(CurrentSelectedGraphNode.Node, CurrentSelectedGraphNode.Node.Successors.Where(x => x.Target == graphNode.Node).First());
+                        }
                     }
                 }
             });
