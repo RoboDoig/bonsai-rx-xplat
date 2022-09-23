@@ -3,6 +3,7 @@ using Bonsai.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,13 @@ namespace bonsai_rx_xplat.Models
         public List<GraphNode> Successors = new();
 
         private PointF StartInteractionPosition;
+
+
+
+        //public object GetValueFromPropertyInfo(PropertyInfo propertyInfo)
+        //{
+        //    return propertyInfo.GetValue(Node);
+        //}
 
         public string Name
         {

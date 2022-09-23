@@ -45,7 +45,7 @@ namespace bonsai_rx_xplat.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public PropertyInfo[] CurrentGraphNodeProperties
+        public PropertyData[] CurrentGraphNodeProperties
         {
             get
             {
@@ -54,8 +54,7 @@ namespace bonsai_rx_xplat.ViewModels
                     var builder = ExpressionBuilder.Unwrap(CurrentSelectedGraphNode.Node.Value);
                     var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
                     var instance = workflowElement ?? builder;
-                    //System.Diagnostics.Debug.WriteLine(instance.GetType().GetProperties()[0].GetValue(instance));
-                    return instance.GetType().GetProperties();
+                    return instance.GetType().GetProperties().Select(x => new PropertyData { PropertyInfo = x, Target = instance}).ToArray();
                 }
                 return null;
             }

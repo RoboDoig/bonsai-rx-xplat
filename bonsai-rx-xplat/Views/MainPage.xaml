@@ -68,10 +68,11 @@
             <Label Text="{Binding CurrentSelectedGraphNode.Name}"></Label>
             <CollectionView ItemsSource="{Binding CurrentGraphNodeProperties}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="refs:PropertyInfo">
+                    <DataTemplate x:DataType="local:PropertyData">
                         <HorizontalStackLayout>
-                            <Label Text="{Binding Name}"></Label>
-                            <Entry Text="{Binding PropertyType}"></Entry>
+                            <Label Text="{Binding PropertyInfo.Name}"></Label>
+                            <Entry Text="{Binding TargetPropertyValue}">
+                            </Entry>
                         </HorizontalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
