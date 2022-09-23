@@ -64,7 +64,6 @@ namespace bonsai_rx_xplat.ViewModels
                         return;
                     }
                 }
-                System.Diagnostics.Debug.WriteLine(point[0].X);
             });
 
             // End interaction
@@ -160,7 +159,7 @@ namespace bonsai_rx_xplat.ViewModels
             public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
             {
                 Node = node;
-                DrawnTransform = new DrawnLabeledRectangle(position, 70, 70, Colors.Blue, Colors.Red, node.Value.ToString());
+                DrawnTransform = new DrawnLabeledRectangle(position, 50, 50, Colors.Blue, Colors.Red, node.Value.ToString());
             }
 
             public bool ContainsPoint(PointF point) => DrawnTransform.ContainsPoint(point);
