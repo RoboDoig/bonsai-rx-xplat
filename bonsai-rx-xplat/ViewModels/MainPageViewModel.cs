@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,7 +15,7 @@ using bonsai_rx_xplat.Models;
 
 namespace bonsai_rx_xplat.ViewModels
 {
-    public class MainPageViewModel : IQueryAttributable
+    public class MainPageViewModel : IQueryAttributable, INotifyPropertyChanged
     {
         ExpressionBuilderGraph Workflow;
         IDisposable Running;
@@ -26,7 +28,37 @@ namespace bonsai_rx_xplat.ViewModels
         public GraphViewCanvas GraphCanvas { get; set; }
 
         private GraphNode LastSelectedGraphNode;
-        private GraphNode CurrentSelectedGraphNode;
+        private GraphNode currentSelectedGraphNode;
+        public GraphNode CurrentSelectedGraphNode
+        {
+            get
+            {
+                return currentSelectedGraphNode;
+            }
+            set
+            {
+                currentSelectedGraphNode = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentSelectedGraphNode)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentGraphNodeProperties)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public PropertyData[] CurrentGraphNodeProperties
+        {
+            get
+            {
+                if (CurrentSelectedGraphNode != null)
+                {
+                    var builder = ExpressionBuilder.Unwrap(CurrentSelectedGraphNode.Node.Value);
+                    var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
+                    var instance = workflowElement ?? builder;
+                    return instance.GetType().GetProperties().Select(x => new PropertyData { PropertyInformation = x, Target = instance}).ToArray();
+                }
+                return null;
+            }
+        }
 
         public MainPageViewModel()
         {
@@ -40,6 +72,7 @@ namespace bonsai_rx_xplat.ViewModels
                     {
                         graphNode.OnSelect(point[0]);
                         CurrentSelectedGraphNode = graphNode;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentGraphNodeProperties)));
 
                         if (LastSelectedGraphNode != null && LastSelectedGraphNode != graphNode)
                         {
@@ -102,10 +135,6 @@ namespace bonsai_rx_xplat.ViewModels
 
             // Temporary workflow build
             Workflow = new ExpressionBuilderGraph();
-            //var timer = Workflow.Add(new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } });
-            //var debug = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            //var debug2 = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            //Workflow.AddEdge(timer, debug, new ExpressionBuilderArgument());
 
             // Draw information
             GraphCanvas = new GraphViewCanvas(Workflow);
@@ -145,42 +174,6 @@ namespace bonsai_rx_xplat.ViewModels
                 Node addNode = query["AddNode"] as Node;
                 Workflow.Add(addNode.Builder());
                 GraphCanvas.UpdateGraphViewCanvas(Workflow);
-            }
-        }
-
-        public class GraphNode
-        {
-            public Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument> Node;
-            public DrawnTransform DrawnTransform;
-            public List<GraphNode> Successors = new();
-
-            private PointF StartInteractionPosition;
-
-            public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
-            {
-                Node = node;
-                DrawnTransform = new DrawnLabeledRectangle(position, 50, 50, Colors.Blue, Colors.Red, node.Value.ToString());
-            }
-
-            public bool ContainsPoint(PointF point) => DrawnTransform.ContainsPoint(point);
-            public void OnSelect(PointF point)
-            {
-                DrawnTransform.OnSelect(point);
-                StartInteractionPosition = DrawnTransform.Origin;
-            }
-            public void OnDeselect() => DrawnTransform.OnDeselect();
-            public void OnDrag(PointF point)
-            {
-                DrawnTransform.OnDrag(point);
-            }
-            public void SetPosition(PointF point) => DrawnTransform.SetPosition(point);
-            public void SnapbackPosition()
-            {
-                DrawnTransform.SetPosition(StartInteractionPosition);
-            }
-            public void Draw(ICanvas canvas, RectF dirtyRect)
-            {
-                DrawnTransform.Draw(canvas, dirtyRect);
             }
         }
 
