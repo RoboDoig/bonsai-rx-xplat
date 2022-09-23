@@ -11,11 +11,11 @@
     </ContentPage.BindingContext>
 
     <VerticalStackLayout>
-        <CollectionView ItemsSource="{Binding Nodes}" SelectionMode="Single">
+        <CollectionView ItemsSource="{Binding Nodes}" SelectionMode="Single" HorizontalOptions="FillAndExpand">
             <CollectionView.ItemTemplate>
 
                 <DataTemplate x:DataType="model:Node">
-                    <Frame HeightRequest="60" Padding="10" BackgroundColor="Black">
+                    <Frame HeightRequest="60" Padding="10" BackgroundColor="Gray">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer 
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:NodeSelectionViewModel}}, Path=SelectNodeCommand}"

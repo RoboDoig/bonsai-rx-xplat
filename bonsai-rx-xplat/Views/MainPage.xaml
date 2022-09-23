@@ -6,7 +6,8 @@
              xmlns:viewmodel="clr-namespace:bonsai_rx_xplat.ViewModels"
              xmlns:local="clr-namespace:bonsai_rx_xplat"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="bonsai_rx_xplat.Views.MainPage">
+             x:Class="bonsai_rx_xplat.Views.MainPage"
+             xmlns:refs="clr-namespace:System.Reflection;assembly=System.Reflection">
 
     <ContentPage.BindingContext>
         <viewmodel:MainPageViewModel></viewmodel:MainPageViewModel>
@@ -62,6 +63,28 @@
                 </GraphicsView.Behaviors>
             </GraphicsView>
         </Border>
+
+        <VerticalStackLayout>
+            <Label Text="{Binding CurrentSelectedGraphNode.Name}"></Label>
+            <CollectionView ItemsSource="{Binding CurrentGraphNodeProperties}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PropertyData">
+                        <HorizontalStackLayout>
+                            <Label Text="{Binding PropertyInformation.Name}"></Label>
+                            <Entry x:Name="PropertyEntry" Text="{Binding TargetPropertyValue}">
+                                <Entry.Behaviors>
+                                    <toolkit:EventToCommandBehavior
+                                        EventName="Completed"
+                                        Command="{Binding SetTargetPropertyValue}"
+                                        CommandParameter="{x:Reference PropertyEntry}">
+                                    </toolkit:EventToCommandBehavior>
+                                </Entry.Behaviors>
+                            </Entry>
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
 
         <Button x:Name="WorkflowBtn" Text="Start" HorizontalOptions="Center"  Command="{Binding WorkflowTriggerCommand}" CommandParameter="{x:Reference WorkflowBtn}"></Button>
 
