@@ -20,26 +20,30 @@ namespace bonsai_rx_xplat.ViewModels
 
         public NodeSelectionViewModel()
         {
-            Nodes.Add(new Node { Name = "Timer" });
-            Nodes.Add(new Node { Name = "Take" });
-            Nodes.Add(new Node { Name = "TakeUntil" });
-            Nodes.Add(new Node { Name = "SelectMany" });
-            Nodes.Add(new Node { Name = "CameraCapture" });
-            Nodes.Add(new Node { Name = "Arduino" });
-            Nodes.Add(new Node { Name = "Router" });
-            Nodes.Add(new Node { Name = "Dealer" });
+            Nodes.Add(new Node { Name = "Timer", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } } });
+            Nodes.Add(new Node { Name = "Take", Builder = () => new CombinatorBuilder { Combinator = new Bonsai.Reactive.Take { Count = 5 } } });
+            Nodes.Add(new Node { Name = "Debug", Builder = () => new CombinatorBuilder { Combinator = new DebugSink() } });
 
-            GoToMainPageCommand = new Command(async () => { await Shell.Current.GoToAsync("///MainPage"); });
+            GoToMainPageCommand = new Command(async () => { await Shell.Current.GoToAsync("///MainPage", true); });
 
             SelectNodeCommand = new Command<Node>(async node =>
             {
-                await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true, 
+                // Navigate to main page with selected node
+                await Shell.Current.GoToAsync($"///{nameof(MainPage)}", true,
                     new Dictionary<string, object>
                     {
-                        {"AddNode", node}
+                        {"AddNode", node }
                     }    
                 );
             });
+        }
+
+        class DebugSink : Sink
+        {
+            public override IObservable<TSource> Process<TSource>(IObservable<TSource> source)
+            {
+                return source.Do(val => System.Diagnostics.Debug.WriteLine(val.ToString()));
+            }
         }
     }
 }

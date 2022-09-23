@@ -10,21 +10,25 @@
         <viewmodel:NodeSelectionViewModel></viewmodel:NodeSelectionViewModel>
     </ContentPage.BindingContext>
 
-    <CollectionView ItemsSource="{Binding Nodes}" SelectionMode="Single">
-        <CollectionView.ItemTemplate>
-            
-            <DataTemplate x:DataType="model:Node">
-                <Frame HeightRequest="125" Padding="10">
-                    <Frame.GestureRecognizers>
-                        <TapGestureRecognizer 
+    <VerticalStackLayout>
+        <CollectionView ItemsSource="{Binding Nodes}" SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate x:DataType="model:Node">
+                    <Frame HeightRequest="60" Padding="10" BackgroundColor="Black">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:NodeSelectionViewModel}}, Path=SelectNodeCommand}"
                             CommandParameter="{Binding .}">
-                        </TapGestureRecognizer>
-                    </Frame.GestureRecognizers>
-                    <Label Text="{Binding Name}"></Label>
-                </Frame>
-            </DataTemplate>
-            
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+                            </TapGestureRecognizer>
+                        </Frame.GestureRecognizers>
+                        <Label Text="{Binding Name}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"></Label>
+                    </Frame>
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Command="{Binding GoToMainPageCommand}" Text="Cancel"></Button>
+    </VerticalStackLayout>
 </ContentPage>
