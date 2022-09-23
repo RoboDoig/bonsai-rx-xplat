@@ -62,6 +62,8 @@ namespace bonsai_rx_xplat.ViewModels
 
         public MainPageViewModel()
         {
+            System.Diagnostics.Debug.WriteLine(DeviceInfo.Platform);
+
             // Start interaction
             StartInteractionCommand = new Command(eventArgs =>
             {
