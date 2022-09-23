@@ -54,7 +54,7 @@ namespace bonsai_rx_xplat.ViewModels
                     var builder = ExpressionBuilder.Unwrap(CurrentSelectedGraphNode.Node.Value);
                     var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
                     var instance = workflowElement ?? builder;
-                    return instance.GetType().GetProperties().Select(x => new PropertyData { PropertyInfo = x, Target = instance}).ToArray();
+                    return instance.GetType().GetProperties().Select(x => new PropertyData { PropertyInformation = x, Target = instance}).ToArray();
                 }
                 return null;
             }

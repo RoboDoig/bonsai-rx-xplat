@@ -70,8 +70,15 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PropertyData">
                         <HorizontalStackLayout>
-                            <Label Text="{Binding PropertyInfo.Name}"></Label>
-                            <Entry Text="{Binding TargetPropertyValue}">
+                            <Label Text="{Binding PropertyInformation.Name}"></Label>
+                            <Entry x:Name="PropertyEntry" Text="{Binding TargetPropertyValue}">
+                                <Entry.Behaviors>
+                                    <toolkit:EventToCommandBehavior
+                                        EventName="Completed"
+                                        Command="{Binding SetTargetPropertyValue}"
+                                        CommandParameter="{x:Reference PropertyEntry}">
+                                    </toolkit:EventToCommandBehavior>
+                                </Entry.Behaviors>
                             </Entry>
                         </HorizontalStackLayout>
                     </DataTemplate>
