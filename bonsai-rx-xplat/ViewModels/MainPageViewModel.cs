@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,7 +15,7 @@ using bonsai_rx_xplat.Models;
 
 namespace bonsai_rx_xplat.ViewModels
 {
-    public class MainPageViewModel : IQueryAttributable
+    public class MainPageViewModel : IQueryAttributable, INotifyPropertyChanged
     {
         ExpressionBuilderGraph Workflow;
         IDisposable Running;
@@ -26,7 +28,38 @@ namespace bonsai_rx_xplat.ViewModels
         public GraphViewCanvas GraphCanvas { get; set; }
 
         private GraphNode LastSelectedGraphNode;
-        private GraphNode CurrentSelectedGraphNode;
+        private GraphNode currentSelectedGraphNode;
+        public GraphNode CurrentSelectedGraphNode
+        {
+            get
+            {
+                return currentSelectedGraphNode;
+            }
+            set
+            {
+                currentSelectedGraphNode = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentSelectedGraphNode)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentGraphNodeProperties)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public PropertyInfo[] CurrentGraphNodeProperties
+        {
+            get
+            {
+                if (CurrentSelectedGraphNode != null)
+                {
+                    var builder = ExpressionBuilder.Unwrap(CurrentSelectedGraphNode.Node.Value);
+                    var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
+                    var instance = workflowElement ?? builder;
+                    //System.Diagnostics.Debug.WriteLine(instance.GetType().GetProperties()[0].GetValue(instance));
+                    return instance.GetType().GetProperties();
+                }
+                return null;
+            }
+        }
 
         public MainPageViewModel()
         {
@@ -40,10 +73,7 @@ namespace bonsai_rx_xplat.ViewModels
                     {
                         graphNode.OnSelect(point[0]);
                         CurrentSelectedGraphNode = graphNode;
-
-                        var builder = ExpressionBuilder.Unwrap(graphNode.Node.Value);
-                        var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
-                        var instance = workflowElement ?? builder;
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentGraphNodeProperties)));
 
                         if (LastSelectedGraphNode != null && LastSelectedGraphNode != graphNode)
                         {

@@ -16,6 +16,14 @@ namespace bonsai_rx_xplat.Models
 
         private PointF StartInteractionPosition;
 
+        public string Name
+        {
+            get
+            {
+                return Node.ToString();
+            }
+        }
+
         public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
         {
             Node = node;
