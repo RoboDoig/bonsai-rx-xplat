@@ -41,6 +41,10 @@ namespace bonsai_rx_xplat.ViewModels
                         graphNode.OnSelect(point[0]);
                         CurrentSelectedGraphNode = graphNode;
 
+                        var builder = ExpressionBuilder.Unwrap(graphNode.Node.Value);
+                        var workflowElement = ExpressionBuilder.GetWorkflowElement(builder);
+                        var instance = workflowElement ?? builder;
+
                         if (LastSelectedGraphNode != null && LastSelectedGraphNode != graphNode)
                         {
                             LastSelectedGraphNode.OnDeselect();
@@ -102,10 +106,6 @@ namespace bonsai_rx_xplat.ViewModels
 
             // Temporary workflow build
             Workflow = new ExpressionBuilderGraph();
-            //var timer = Workflow.Add(new CombinatorBuilder { Combinator = new Bonsai.Reactive.Timer { Period = TimeSpan.FromSeconds(1) } });
-            //var debug = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            //var debug2 = Workflow.Add(new CombinatorBuilder { Combinator = new DebugSink { } });
-            //Workflow.AddEdge(timer, debug, new ExpressionBuilderArgument());
 
             // Draw information
             GraphCanvas = new GraphViewCanvas(Workflow);
@@ -145,42 +145,6 @@ namespace bonsai_rx_xplat.ViewModels
                 Node addNode = query["AddNode"] as Node;
                 Workflow.Add(addNode.Builder());
                 GraphCanvas.UpdateGraphViewCanvas(Workflow);
-            }
-        }
-
-        public class GraphNode
-        {
-            public Bonsai.Dag.Node<ExpressionBuilder, ExpressionBuilderArgument> Node;
-            public DrawnTransform DrawnTransform;
-            public List<GraphNode> Successors = new();
-
-            private PointF StartInteractionPosition;
-
-            public GraphNode(Node<ExpressionBuilder, ExpressionBuilderArgument> node, PointF position)
-            {
-                Node = node;
-                DrawnTransform = new DrawnLabeledRectangle(position, 50, 50, Colors.Blue, Colors.Red, node.Value.ToString());
-            }
-
-            public bool ContainsPoint(PointF point) => DrawnTransform.ContainsPoint(point);
-            public void OnSelect(PointF point)
-            {
-                DrawnTransform.OnSelect(point);
-                StartInteractionPosition = DrawnTransform.Origin;
-            }
-            public void OnDeselect() => DrawnTransform.OnDeselect();
-            public void OnDrag(PointF point)
-            {
-                DrawnTransform.OnDrag(point);
-            }
-            public void SetPosition(PointF point) => DrawnTransform.SetPosition(point);
-            public void SnapbackPosition()
-            {
-                DrawnTransform.SetPosition(StartInteractionPosition);
-            }
-            public void Draw(ICanvas canvas, RectF dirtyRect)
-            {
-                DrawnTransform.Draw(canvas, dirtyRect);
             }
         }
 
