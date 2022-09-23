@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -36,9 +37,12 @@ namespace bonsai_rx_xplat
             SetTargetPropertyValue = new Command(obj =>
             {
                 var value = ((Entry)obj).Text;
-                System.Diagnostics.Debug.WriteLine(value);
-                var casted = PropertyUtils.Cast(value, PropertyInformation.PropertyType);
-                PropertyInformation.SetValue(Target, casted);
+                var dType = PropertyInformation.PropertyType;
+
+                var converter = TypeDescriptor.GetConverter(dType);
+                var converted = converter.ConvertFromString(value);
+
+                PropertyInformation.SetValue(Target, converted);
             });
         }
     }
