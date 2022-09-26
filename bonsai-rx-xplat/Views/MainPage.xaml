@@ -23,7 +23,6 @@
         <Border Stroke="#00000" StrokeThickness="4">
             <GraphicsView x:Name="WorkflowView" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HeightRequest="500" Drawable="{Binding GraphCanvas}">
                 <GraphicsView.Behaviors>
-
                     <toolkit:EventToCommandBehavior
                             EventName="StartInteraction"
                             Command="{Binding StartInteractionCommand}"

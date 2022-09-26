@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Bonsai;
-using Bonsai.Dag;
 using Bonsai.Expressions;
 using bonsai_rx_xplat.Models;
 
@@ -25,6 +15,7 @@ namespace bonsai_rx_xplat.ViewModels
         public Command EndInteractionCommand { get; private set; }
         public Command DragInteractionCommand { get; private set; }
         public Command CanvasInteractionCommand { get; private set; }
+        public Command DoubleTapCommand { get; private set; }
         public GraphViewCanvas GraphCanvas { get; set; }
 
         private GraphNode LastSelectedGraphNode;
